@@ -1,0 +1,92 @@
+// Інтерфейс Вантажоперевізник
+abstract class Vantazhopereviznyk {
+  double rozrahuvatyChas(double vidstan);     // години
+  double rozrahuvatyVartist(double vidstan);  // грн
+  void info(double vidstan, String misto);
+}
+
+// Клас Літак
+class Litak implements Vantazhopereviznyk {
+  final double shvydkist = 850;  // км/год
+  final double tsinaZaKm = 25;   // грн/км
+
+  @override
+  double rozrahuvatyChas(double vidstan) => vidstan / shvydkist;
+
+  @override
+  double rozrahuvatyVartist(double vidstan) => vidstan * tsinaZaKm;
+
+  @override
+  void info(double vidstan, String misto) {
+    print('✈ Літак до $misto:');
+    print('  Відстань: ${vidstan} км');
+    print('  Час: ${rozrahuvatyChas(vidstan).toStringAsFixed(2)} год');
+    print('  Вартість: ${rozrahuvatyVartist(vidstan).toStringAsFixed(2)} грн');
+    print('');
+  }
+}
+
+// Клас Поїзд
+class Poyizd implements Vantazhopereviznyk {
+  final double shvydkist = 120;   // км/год
+  final double tsinaZaKm = 10;    // грн/км
+
+  @override
+  double rozrahuvatyChas(double vidstan) => vidstan / shvydkist;
+
+  @override
+  double rozrahuvatyVartist(double vidstan) => vidstan * tsinaZaKm;
+
+  @override
+  void info(double vidstan, String misto) {
+    print('🚆 Поїзд до $misto:');
+    print('  Відстань: ${vidstan} км');
+    print('  Час: ${rozrahuvatyChas(vidstan).toStringAsFixed(2)} год');
+    print('  Вартість: ${rozrahuvatyVartist(vidstan).toStringAsFixed(2)} грн');
+    print('');
+  }
+}
+
+// Клас Автомобіль
+class Avtomobil implements Vantazhopereviznyk {
+  final double shvydkist = 80;   // км/год
+  final double tsinaZaKm = 8;    // грн/км
+
+  @override
+  double rozrahuvatyChas(double vidstan) => vidstan / shvydkist;
+
+  @override
+  double rozrahuvatyVartist(double vidstan) => vidstan * tsinaZaKm;
+
+  @override
+  void info(double vidstan, String misto) {
+    print('🚗 Автомобіль до $misto:');
+    print('  Відстань: ${vidstan} км');
+    print('  Час: ${rozrahuvatyChas(vidstan).toStringAsFixed(2)} год');
+    print('  Вартість: ${rozrahuvatyVartist(vidstan).toStringAsFixed(2)} грн');
+    print('');
+  }
+}
+
+// Основна функція
+void main() {
+  List<Map<String, dynamic>> marshruty = [
+    {'misto': 'Київ', 'vidstan': 480.0},
+    {'misto': 'Львів', 'vidstan': 540.0},
+    {'misto': 'Одеса', 'vidstan': 470.0},
+  ];
+
+  var litak = Litak();
+  var poyizd = Poyizd();
+  var avtomobil = Avtomobil();
+
+  for (var marshrut in marshruty) {
+    String misto = marshrut['misto'];
+    double vidstan = marshrut['vidstan'];
+
+    litak.info(vidstan, misto);
+    poyizd.info(vidstan, misto);
+    avtomobil.info(vidstan, misto);
+  }
+}
+

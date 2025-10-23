@@ -1,0 +1,82 @@
+// === Клас Практичне заняття ===
+class PracticalLesson {
+  String date;
+  String topic;
+  int studentCount;
+
+  PracticalLesson(this.date, this.topic, this.studentCount);
+
+  @override
+  String toString() =>
+      'Дата: $date, Тема: "$topic", Студентів: $studentCount';
+}
+
+// === Generic-клас Навчальний курс<T> ===
+class StudyCourse<T extends PracticalLesson> {
+  String title;
+  bool hasExam;
+  Set<T> lessons = {};
+
+  StudyCourse(this.title, this.hasExam);
+
+  // Додавання заняття (Generic метод)
+  void addLesson(T lesson) {
+    lessons.add(lesson);
+  }
+
+  // Generic метод 1️⃣ — середнє значення для будь-якого числового поля
+  double averageValue<R extends num>(R Function(T) getter) {
+    if (lessons.isEmpty) return 0;
+    var sum = lessons.fold<num>(0, (total, l) => total + getter(l));
+    return sum / lessons.length;
+  }
+
+  // Generic метод 2️⃣ — пошук максимуму за будь-яким критерієм
+  T? maxByCriterion<R extends Comparable>(R Function(T) getter) {
+    if (lessons.isEmpty) return null;
+    return lessons.reduce(
+        (a, b) => getter(a).compareTo(getter(b)) >= 0 ? a : b);
+  }
+
+  // Generic метод 3️⃣ — фільтрація за будь-якою умовою
+  List<T> filter(bool Function(T) condition) {
+    return lessons.where(condition).toList();
+  }
+
+  // Вивід усіх занять
+  void showLessons() {
+    print('Заняття курсу "$title":');
+    for (var l in lessons) {
+      print('  - $l');
+    }
+    print('');
+  }
+}
+
+// === main() ===
+void main() {
+  var course = StudyCourse<PracticalLesson>('Основи програмування', true);
+
+  // Додаємо заняття
+  course.addLesson(PracticalLesson('2025-09-12', 'Алгоритми сортування', 25));
+  course.addLesson(PracticalLesson('2025-09-19', 'Робота з колекціями', 22));
+  course.addLesson(PracticalLesson('2025-09-26', 'Аналіз алгоритмів', 30));
+  course.addLesson(PracticalLesson('2025-10-03', 'Основи Dart', 28));
+
+  // Вивід усіх занять
+  course.showLessons();
+
+  // 🔸 Використання generic-методів
+  print('Середня кількість студентів: '
+      '${course.averageValue((l) => l.studentCount).toStringAsFixed(2)}');
+
+  var maxLesson = course.maxByCriterion((l) => l.studentCount);
+  print('Заняття з найбільшою кількістю студентів: $maxLesson');
+
+  var topicsWithWord = course
+      .filter((l) => l.topic.toLowerCase().contains('алгоритм'))
+      .map((l) => l.topic)
+      .toList();
+  print('Теми, що містять слово "алгоритм":');
+  topicsWithWord.forEach((t) => print('  - $t'));
+}

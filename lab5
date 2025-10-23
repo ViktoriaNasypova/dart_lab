@@ -1,0 +1,116 @@
+class PracticalLesson {
+  String date;
+  String topic;
+  int studentCount;
+
+  PracticalLesson(this.date, this.topic, this.studentCount);
+
+  @override
+  String toString() =>
+      'Дата: $date, Тема: "$topic", Студентів: $studentCount';
+}
+
+class StudyCourse<T extends PracticalLesson> {
+  String title;
+  bool hasExam;
+  Set<T> lessons = {};
+
+  StudyCourse(this.title, this.hasExam);
+
+  void addLesson(T lesson) {
+    lessons.add(lesson);
+  }
+
+  double averageValue<R extends num>(R Function(T) getter) {
+    if (lessons.isEmpty) return 0;
+    var sum = lessons.fold<num>(0, (total, l) => total + getter(l));
+    return sum / lessons.length;
+  }
+
+  // === Generic метод — максимум за критерієм
+  T? maxByCriterion<R extends Comparable>(R Function(T) getter) {
+    if (lessons.isEmpty) return null;
+    return lessons.reduce(
+        (a, b) => getter(a).compareTo(getter(b)) >= 0 ? a : b);
+  }
+
+  // === Generic метод — фільтрація
+  List<T> filter(bool Function(T) condition) {
+    return lessons.where(condition).toList();
+  }
+
+  // === Асинхронні функції (Future) ===
+
+  // Future із Future.value()
+  Future<double> futureAverageValue() {
+    double result = averageValue((l) => l.studentCount);
+    return Future.value(result);
+  }
+
+  // Future із Future.delayed()
+  Future<T?> futureMaxByCriterion() async {
+    return await Future.delayed(
+      Duration(seconds: 1),
+      () => maxByCriterion((l) => l.studentCount),
+    );
+  }
+
+  // Future із обробкою даних
+  Future<List<String>> futureTopicsWithWord(String word) async {
+    return await Future.delayed(
+      Duration(milliseconds: 500),
+      () => filter(
+              (l) => l.topic.toLowerCase().contains(word.toLowerCase()))
+          .map((l) => l.topic)
+          .toList(),
+    );
+  }
+
+  // === Вивід усіх занять ===
+  void showLessons() {
+    print('Заняття курсу "$title":');
+    for (var l in lessons) {
+      print('  - $l');
+    }
+    print('');
+  }
+}
+
+// === Асинхронна функція ===
+Future<void> analyzeCourse(StudyCourse course) async {
+  try {
+    print('Аналіз курсу почато...\n');
+
+    double avg = await course.futureAverageValue();
+    print('Середня кількість студентів: ${avg.toStringAsFixed(2)}');
+
+    var maxLesson = await course.futureMaxByCriterion();
+    print('Найбільше студентів на занятті: $maxLesson');
+
+    var topics = await course.futureTopicsWithWord('алгоритм');
+    print('Теми з ключовим словом "алгоритм":');
+    topics.forEach((t) => print('  - $t'));
+
+    print('\nАналіз завершено успішно.');
+  } catch (e) {
+    print('Виникла помилка під час аналізу: $e');
+  }
+}
+
+void main() async {
+  var course = StudyCourse<PracticalLesson>('Основи програмування', true);
+
+  course.addLesson(
+      PracticalLesson('2025-09-12', 'Алгоритми сортування', 25));
+  course.addLesson(
+      PracticalLesson('2025-09-19', 'Робота з колекціями', 22));
+  course.addLesson(
+      PracticalLesson('2025-09-26', 'Аналіз алгоритмів', 30));
+  course.addLesson(
+      PracticalLesson('2025-10-03', 'Основи Dart', 28));
+
+  course.showLessons();
+
+  await analyzeCourse(course);
+}
+

@@ -1,0 +1,74 @@
+class PracticalLesson {
+  String date;
+  String topic;
+  int studentCount;
+
+  PracticalLesson(this.date, this.topic, this.studentCount);
+
+  @override
+  String toString() =>
+      'Дата: $date, Тема: "$topic", Студентів: $studentCount';
+}
+
+// Клас НавчальнийКурс
+class StudyCourse {
+  String title;
+  bool hasExam;
+  Set<PracticalLesson> lessons = {};
+
+  StudyCourse(this.title, this.hasExam);
+
+  // Додати заняття
+  void addLesson(PracticalLesson lesson) {
+    lessons.add(lesson);
+  }
+
+  // Середня кількість студентів
+  double averageStudentCount() {
+    if (lessons.isEmpty) return 0;
+    int total = lessons.fold(0, (sum, l) => sum + l.studentCount);
+    return total / lessons.length;
+  }
+
+  // Заняття з максимальною кількістю студентів
+  PracticalLesson? lessonWithMaxStudents() {
+    if (lessons.isEmpty) return null;
+    return lessons.reduce((a, b) =>
+        a.studentCount > b.studentCount ? a : b);
+  }
+
+  // Теми, що містять певне слово
+  List<String> topicsWithWord(String word) {
+    return lessons
+        .where((l) => l.topic.toLowerCase().contains(word.toLowerCase()))
+        .map((l) => l.topic)
+        .toList();
+  }
+
+  // Вивід усіх занять
+  void showLessons() {
+    print('Заняття курсу "$title":');
+    for (var l in lessons) {
+      print('  - $l');
+    }
+    print('');
+  }
+}
+
+void main() {
+  var course = StudyCourse('Основи програмування', true);
+
+  course.addLesson(PracticalLesson('2025-09-12', 'Алгоритми сортування', 25));
+  course.addLesson(PracticalLesson('2025-09-19', 'Робота з колекціями', 22));
+  course.addLesson(PracticalLesson('2025-09-26', 'Аналіз алгоритмів', 30));
+  course.addLesson(PracticalLesson('2025-10-03', 'Основи Dart', 28));
+
+  course.showLessons();
+
+  print('Середня кількість студентів: ${course.averageStudentCount().toStringAsFixed(2)}');
+  print('Заняття з максимальною кількістю студентів: ${course.lessonWithMaxStudents()}');
+
+  var topics = course.topicsWithWord('алгоритм');
+  print('Теми, що містять слово "алгоритм":');
+  topics.forEach((t) => print('  - $t'));
+}

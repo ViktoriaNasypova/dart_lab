@@ -1,0 +1,172 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+/// Головний додаток
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Світові композитори',
+      home: const ComposerListPage(),
+    );
+  }
+}
+
+/// Модель даних для композитора
+class Composer {
+  final String name;
+  final String description;
+  final String imageUrl;
+
+  Composer({
+    required this.name,
+    required this.description,
+    required this.imageUrl,
+  });
+}
+
+/// Сторінка зі списком композиторів
+class ComposerListPage extends StatefulWidget {
+  const ComposerListPage({super.key});
+
+  @override
+  State<ComposerListPage> createState() => _ComposerListPageState();
+}
+
+class _ComposerListPageState extends State<ComposerListPage> {
+  // Список композиторів
+ final List<Composer> composers = [
+  Composer(
+    name: 'Людвіг ван Бетховен',
+    description: 'Німецький композитор і піаніст класичної та романтичної епохи.',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Beethoven.jpg',
+  ),
+  Composer(
+    name: 'Йоганн Себастьян Бах',
+    description: 'Німецький композитор барокової епохи, органіст і теоретик музики.',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Johann_Sebastian_Bach.jpg',
+  ),
+  Composer(
+    name: 'Вольфганг Амадей Моцарт',
+    description: 'Австрійський композитор класичної епохи, вундеркінд і автор опер.',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1e/Wolfgang-amadeus-mozart_1.jpg',
+  ),
+  Composer(
+    name: 'Фредерік Шопен',
+    description: 'Польський композитор романтичної епохи, знаменитий фортепіаніст.',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/8f/Frederic_Chopin_-_by_Wodzinska.jpg',
+  ),
+  Composer(
+    name: 'Петро Чайковський',
+    description: 'Російський композитор романтичної епохи, автор балетів і симфоній.',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Pyotr_Ilyich_Tchaikovsky_1893.jpg',
+  ),
+  Composer(
+    name: 'Антоніо Вівальді',
+    description: 'Італійський композитор барокової епохи, автор "Пори року".',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/13/Antonio_Vivaldi_by_Francois_Morellon_La_Cave.jpg',
+  ),
+];
+
+  int selectedIndex = -1; // Вибраний елемент
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Світові композитори'),
+        backgroundColor: Colors.blueGrey,
+      ),
+      body: ListView.builder(
+        itemCount: composers.length,
+        itemBuilder: (context, index) {
+          final composer = composers[index];
+          final isSelected = index == selectedIndex;
+
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedIndex = index; // Оновлюємо вибраний елемент
+              });
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                // The fix for `withOpacity` being deprecated is to use `withAlpha`.
+                // For Colors.lightBlueAccent.withOpacity(0.5), it would be Colors.lightBlueAccent.withAlpha((255 * 0.5).round())
+                // which simplifies to Colors.lightBlueAccent.withAlpha(128).
+                color: isSelected ? Colors.lightBlueAccent.withAlpha(128) : Colors.white,
+                border: Border.all(
+                  color: isSelected ? Colors.blue : Colors.grey,
+                  width: isSelected ? 2 : 1,
+                ),
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    // FIX: Replaced deprecated 'withOpacity' with 'withAlpha'
+                    color: Colors.grey.withAlpha((255 * 0.2).round()), // 0.2 * 255 = 51
+                    blurRadius: 3,
+                    offset: const Offset(2, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  // Зображення композитора
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      composer.imageUrl,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      // FIX: Added errorBuilder to handle image loading failures gracefully.
+                      // This helps prevent RenderFlex overflow if a broken image widget
+                      // without explicit size occupies more space than intended.
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[300], // Placeholder color
+                          child: const Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  // Текстова інформація
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          composer.name,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          composer.description,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}

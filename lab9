@@ -1,0 +1,155 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+/// Головний додаток
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: const Color(0xFFEEEEEE),
+        body: Center(
+          child: Container(
+            width: 550,   // m = 550
+            height: 550,  // h = 550
+            padding: const EdgeInsets.all(10), // e-min, k-min
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.black, width: 2),
+            ),
+            child: Stack(
+              children: const [
+                /// ЖОВТИЙ БЛОК
+                EditableBlock(
+                  top: 50,
+                  left: 50,
+                  width: 200,
+                  height: 100,
+                  color: Color(0xFFFFEB3B),
+                  initialText: 'Ще не вмерла України,\nі слава, і воля,\nще нам, браття',
+                ),
+
+                /// СИНІЙ БЛОК
+                EditableBlock(
+                  top: 50,
+                  left: 350,
+                  width: 350,
+                  height: 100,
+                  color: Color(0xFF90CAF9),
+                  initialText: 'Згинуть наші вороженьки,\nяк роса на сонці,\nзапануєм і ми, браття,\nу своїй сторонці.',
+                ),
+
+                /// БІЛИЙ БЛОК
+                EditableBlock(
+                  top: 300,
+                  left: 100,
+                  width: 350,
+                  height: 100,
+                  color: Colors.white,
+                  initialText: 'І покажем, що ми, браття,\nкозацького роду.',
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Власний віджет на основі StatefulWidget з можливістю редагування тексту
+class EditableBlock extends StatefulWidget {
+  final double top;
+  final double left;
+  final double width;
+  final double height;
+  final Color color;
+  final String initialText;
+
+  const EditableBlock({
+    super.key,
+    required this.top,
+    required this.left,
+    required this.width,
+    required this.height,
+    required this.color,
+    required this.initialText,
+  });
+
+  @override
+  State<EditableBlock> createState() => _EditableBlockState();
+}
+
+class _EditableBlockState extends State<EditableBlock> {
+  late String _text;
+
+  @override
+  void initState() {
+    super.initState();
+    _text = widget.initialText;
+  }
+
+  /// Метод для редагування тексту через діалогове вікно
+  void _editText() async {
+    final controller = TextEditingController(text: _text);
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Редагувати текст'),
+        content: TextField(
+          controller: controller,
+          maxLines: null,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, null),
+            child: const Text('Відміна'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: const Text('Зберегти'),
+          ),
+        ],
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        _text = result;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: widget.top,
+      left: widget.left,
+      child: GestureDetector(
+        onTap: _editText, // Натискання для редагування
+        child: Container(
+          width: widget.width,
+          height: widget.height,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: widget.color,
+            border: Border.all(color: Colors.black, width: 2),
+          ),
+          child: Text(
+            _text,
+            style: const TextStyle(fontSize: 14),
+          ),
+        ),
+      ),
+    );
+  }
+}

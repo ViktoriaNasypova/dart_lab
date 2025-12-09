@@ -1,0 +1,106 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+/// Головний додаток
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: const Color(0xFFEEEEEE),
+        body: Center(
+          child: Container(
+            width: 550,   // m = 550
+            height: 550,  // h = 550
+            padding: const EdgeInsets.all(10), // e-min, k-min
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.black, width: 2),
+            ),
+            child: Stack(
+              children: [
+                /// ЖОВТИЙ БЛОК
+                ColoredBlock(
+                  top: 50,
+                  left: 50,
+                  width: 200,
+                  height: 100,
+                  color: const Color(0xFFFFEB3B),
+                  text: 'Ще не вмерла України,\nі слава, і воля,\nще нам, браття',
+                ),
+
+                /// СИНІЙ БЛОК
+                ColoredBlock(
+                  top: 50,
+                  left: 350,
+                  width: 350,
+                  height: 100,
+                  color: const Color(0xFF90CAF9),
+                  text:
+                      'Згинуть наші вороженьки,\nяк роса на сонці,\nзапануєм і ми, браття,\nу своїй сторонці.',
+                ),
+
+                /// БІЛИЙ БЛОК
+                ColoredBlock(
+                  top: 300,
+                  left: 100,
+                  width: 350,
+                  height: 100,
+                  color: Colors.white,
+                  text: 'І покажем, що ми, браття,\nкозацького роду.',
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Власний віджет для блоків
+class ColoredBlock extends StatelessWidget {
+  final double top;
+  final double left;
+  final double width;
+  final double height;
+  final Color color;
+  final String text;
+
+  const ColoredBlock({
+    super.key,
+    required this.top,
+    required this.left,
+    required this.width,
+    required this.height,
+    required this.color,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: top,
+      left: left,
+      child: Container(
+        width: width,
+        height: height,
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: color,
+          border: Border.all(color: Colors.black, width: 2),
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 14),
+        ),
+      ),
+    );
+  }
+}

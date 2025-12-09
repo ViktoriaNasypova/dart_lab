@@ -1,0 +1,103 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Container(
+            width: 300,
+            height: 200,
+            color: Colors.transparent,
+            child: Stack(
+              children: [
+
+                Positioned(
+                  top: 20 + 35, // a + b = 55
+                  left: 35,     // b
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    color: Colors.lightBlue,
+                  ),
+                ),
+
+                Positioned(
+                  top: 20,      // a
+                  left: 35,
+                  right: 0,
+                  height: 35,   // b
+                  child: Container(
+                    color: Colors.red,
+                    padding: const EdgeInsets.symmetric(horizontal: 70),
+                    alignment: Alignment.centerRight,
+                    child: RichText(
+                      text: const TextSpan(
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        children: [
+                           TextSpan(
+                            text: 'Z',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          TextSpan(
+                            text: 'S',
+                            style: TextStyle(color: Colors.yellow),
+                          ),
+                          TextSpan(
+                            text: 'U link',
+                            style: TextStyle(color: Colors.green),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                Positioned(
+                  top: 20,
+                  left: 35,
+                  width: 35,
+                  bottom: 0,
+                  child: Container(
+                    color: Colors.red,
+                  ),
+                ),
+
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  bottom: 0,
+                  width: 35,
+                  child: Container(
+                    color: Colors.yellow,
+                  ),
+                ),
+
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 20,
+                  child: Container(
+                    color: Colors.yellow,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
